@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head><title>Latihan Perulangan</title></head>
+<body>
+    <h2>Daftar TI Sore 2025</h2>
+    <ul id="daftar-tisore">
+        <!-- Konten akan diisi oleh JavaScript -->
+    </ul>
+    <script>
+        var tisore = ["Aufa Nabith", "Aqhlia Nurfahma", "Nur Maulida", "Erlina Rosa", "Annida Akmalia"];
+        var daftarElement = document.getElementById("daftar-tisore");
+        for (let i = 0; i < tisore.length; i++) {
+            daftarElement.innerHTML += "<li>" + tisore[i] + "</li>";
+        }
+    </script>
+</body>
+</html>

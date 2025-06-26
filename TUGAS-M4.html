@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toko Elektronik Cepat</title>
+    <style>
+        body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+#header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #2c3e50;
+    color: white;
+    border-radius: 8px;
+}
+#main-content {
+    display: flex;
+    gap: 30px;
+}
+#product-display {
+    flex: 2;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+#slideshow-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+#product-image {
+    width: 100%; /* Mengatur lebar gambar menjadi 100% dari kontainer */
+    height: auto; /* Mengatur tinggi otomatis untuk mempertahankan rasio aspek */
+    object-fit: cover; /* Memastikan gambar tetap terpotong dengan baik */
+    border-radius: 4px;
+}
+.slideshow-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px 15px;
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+#prev-button {
+    left: 10px;
+}
+#next-button {
+    right: 10px;
+}
+#product-info {
+    text-align: center;
+}
+#product-list {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.product-item {
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.product-item:hover {
+    background-color: #e9ecef;
+    transform: translateX(5px);
+}
+#order-form {
+    margin-top: 30px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.form-group {
+    margin-bottom: 15px;
+}
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+button {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}    
+button:hover {
+    background-color: #2ecc71;
+}
+#order-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+}
+    </style>
+</head>
+<body>
+<div id="header">
+    <h1>Toko Elektronik Cepat</h1>
+    <div id="current-time"></div>
+</div>
+<div id="main-content">
+    <div id="product-display">
+        <div id="slideshow-container">
+            <img id="product-image" src="" alt="Gambar Produk" src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/d40b4c21-7c35-4890-95c8-5c8f8a779723.png">
+            <button id="prev-button" class="slideshow-button" onclick="prevImage()">❮</button>
+            <button id="next-button" class="slideshow-button" onclick="nextImage()">❯</button>
+        </div>
+        <div id="product-info">
+            <h2 id="product-name"></h2>
+            <p id="product-price"></p>
+        </div>
+    </div>
+    <div id="product-list">
+        <h3>Daftar Produk</h3>
+        <div id="product-items"></div>
+    </div>
+</div>
+<div id="order-form">
+    <h3>Form Pemesanan</h3>
+    <div class="form-group">
+        <input type="text" id="customer-name" placeholder="Nama Pemesan" required>
+    </div>
+    <div class="form-group">
+        <input type="number" id="order-quantity" placeholder="Jumlah Pesan" min="1" required>
+    </div>
+    <div class="form-group">
+        <input type="text" id="promo-code" placeholder="Kode Promo (Opsional)">
+    </div>
+    <button onclick="placeOrder()">Pesan Sekarang</button>
+    <div id="order-message"></div>
+</div>
+<script>
+    const products = [
+        {
+            name: "Laptop Gaming Pro",
+            price: 31499000,
+            images: [
+                "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTzoEb1XTTA9QbEs4919UV8I_zhVlrCZfc12aR_KCVZyVcqJnMs2npead9B0Zaclu4_PIw-m9rldKe8krwlDqXQmAe6cIhTGext7PPiZRaMSsyx30SrZVdkTg",
+                "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcSaVEr_15M9W7xfjUnTsiZDGX7z752Nk8C_DK_8-0g6cKGAjlneBy3wtNMv95iS12ubwJoEZBJRlj5LwlNfY5enxyTAbuGCv0cpphS5Q0XKTEaVL6xZ0grQRA",
+                "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcS0X2HS7qy6QSQCeSdKwyW9tnMhveQ0jtWYhZ74mrIX_S2l8CvbvZRFSPAxdax9O6Cf5_1YrzDhY7m1Upp39VfSl1bspTraCfmbBaowxWDlF7fAS9sCmXSEXQ"
+            ],
+            description: "Laptop gaming dengan performa tinggi untuk kebutuhan gaming dan kreatif."
+        },
+        {
+            name: "Smartphone Flagship",
+            price: 14099060,
+            images: [
+                "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcS1N5I2vPTRiRtCFEJwQ2TTbs7T8fuF4dXR6gvmC2zAd0qaTREkToO4DpLd5n9mjKEMdgDmyM7ltB3-LOnrnUFybpR3iaUL",
+                "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcQkBNuuDfSvryXu5GdsUoFtLDrSf25UEW3NE0fDP99_3NBH_pKYF4L013qQ6cagrAXNRSWp6BSqpgGMtSax4VbFUqwwJP6iA0zg1IsPn8HntpU6bjBHnqh__w",
+                "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQElRh7ubjqyHsI-qz9aiX7JItDvgApkxQXPoPgvaiHRPG9BYnUpaJIBteZsx1nSLYC9sDSrivKmgFqEst5Mj3qdCLnE4kEZI0BLLR9KNNIyQ9XYLe02Ly8wA"
+            ],
+            description: "Smartphone kelas premium dengan kamera canggih dan performa maksimal."
+        },
+        {
+            name: "Televisi Digital",
+            price: 9500000,
+            images: [
+                "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQqXURMTZy2K281iJBcZVeyMES1s7MElARGQ2GovmvN0IrfeEkbazNAZnS5t9epoFLnUXyPC4k3kh5Lal8CaWCaq-qalucUpdubohFcyc-UuXWrT5BED2VoKA",
+                "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcRIB7ScRVf4W68_r8lrp23DVF9jnREq6w3R8UcuzdpW72GYVrJIFRKtxU3IEwhPtSnGP6JXxldOJPM8h2Dx6vnDPTrGuGAmoGO2ou77vvNs3VW6mC9WmIbNhg",
+                "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcSgCUg3oc1iSfCOhnCbqzM3GenJ_iifA4akl4AmHt594soREFv2Xpe4sOhx0cMtxjvSfegCkGVykUvDF9z2JrORyW0RDIhSGpHtvzhEmCaRjPfA20k8OtMHSw"
+            ],
+            description: "Headphone dengan kualitas suara tinggi dan noise cancellation."
+        }
+    ];
+    let currentProductIndex = 0;
+    let currentImageIndex = 0;
+    // Fungsi untuk update waktu
+    function updateTime() {
+        const now = new Date();
+        const options = { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
+        document.getElementById('current-time').innerText = now.toLocaleDateString('id-ID', options);
+    }
+    // Fungsi untuk menampilkan produk
+    function displayProduct(index) {
+        currentProductIndex = index;
+        currentImageIndex = 0;
+        updateImageDisplay();
+        const product = products[index];
+        document.getElementById('product-name').innerText = product.name;
+        document.getElementById('product-price').innerText = `Rp ${product.price.toLocaleString('id-ID')}`;   
+        // Highlight produk yang aktif di daftar produk
+        const items = document.querySelectorAll('.product-item');
+        items.forEach((item, i) => {
+            item.style.backgroundColor = i === index ? '#e9ecef' : '#f8f9fa';
+        });
+    }
+    // Fungsi untuk update gambar yang ditampilkan
+    function updateImageDisplay() {
+        const product = products[currentProductIndex];
+        document.getElementById('product-image').src = product.images[currentImageIndex];
+        document.getElementById('product-image').alt = `${product.name} - Gambar ${currentImageIndex + 1}`;
+    }
+    // Fungsi untuk gambar berikutnya
+    function nextImage() {
+        const product = products[currentProductIndex];
+        currentImageIndex = (currentImageIndex + 1) % product.images.length;
+        updateImageDisplay();
+    }
+    // Fungsi untuk gambar sebelumnya
+    function prevImage() {
+        const product = products[currentProductIndex];
+        currentImageIndex = (currentImageIndex - 1 + product.images.length) % product.images.length;
+        updateImageDisplay();
+    }
+    // Fungsi untuk menampilkan daftar produk
+    function displayProductList() {
+        const productItems = document.getElementById('product-items');
+        productItems.innerHTML = '';       
+        products.forEach((product, index) => {
+            const item = document.createElement('div');
+            item.className = 'product-item';
+            item.innerHTML = `
+                <strong>${product.name}</strong><br>
+                <small>Rp ${product.price.toLocaleString('id-ID')}</small>
+            `;
+            item.onclick = () => displayProduct(index);
+            productItems.appendChild(item);
+        });
+    }
+    // Fungsi untuk memproses pesanan
+    function placeOrder() {
+        const nameInput = document.getElementById('customer-name');
+        const quantityInput = document.getElementById('order-quantity');
+        const promoCodeInput = document.getElementById('promo-code');
+        const messageElement = document.getElementById('order-message');        
+        const name = nameInput.value.trim();
+        const quantity = parseInt(quantityInput.value);
+        const promoCode = promoCodeInput.value.trim().toUpperCase();
+        const product = products[currentProductIndex];        
+        // Validasi form
+        if (!name) {
+            messageElement.innerText = "Nama pemesan tidak boleh kosong!";
+            messageElement.style.backgroundColor = "#ffecec";
+            messageElement.style.color = "#d32f2f";
+            nameInput.focus();
+            return;
+        }        
+        if (isNaN(quantity) || quantity <= 0) {
+            messageElement.innerText = "Jumlah pesan harus lebih dari 0!";
+            messageElement.style.backgroundColor = "#ffecec";
+            messageElement.style.color = "#d32f2f";
+            quantityInput.focus();
+            return;
+        }        
+        // Hitung total
+        let subtotal = product.price * quantity;
+        let discount = 0;        
+        // Cek kode promo
+        if (promoCode === "DISKON10") {
+            discount = subtotal * 0.1; // Diskon 10%
+        } else if (promoCode === "DISKON20") {
+            discount = subtotal * 0.2; // Diskon 20% untuk kode contoh
+        }
+        const total = subtotal - discount;       
+        // Tampilkan pesan konfirmasi
+        messageElement.innerHTML = `
+            <strong>Detail Pesanan:</strong><br>
+            Produk: ${product.name}<br>
+            Harga Satuan: Rp ${product.price.toLocaleString('id-ID')}<br>
+            Jumlah: ${quantity}<br>
+            Subtotal: Rp ${subtotal.toLocaleString('id-ID')}<br>
+            ${discount > 0 ? `Diskon: Rp ${discount.toLocaleString('id-ID')}<br>` : ''}
+            <strong>Total Pembayaran: Rp ${total.toLocaleString('id-ID')}</strong>
+        `;
+        messageElement.style.backgroundColor = "#e8f5e9";
+        messageElement.style.color = "#2e7d32";
+    }
+    // Inisialisasi
+    setInterval(updateTime, 1000);
+    displayProductList();
+    displayProduct(0);
+    updateTime(); // Panggil sekali untuk inisialisasi
+</script>
+</body>
+</html>
